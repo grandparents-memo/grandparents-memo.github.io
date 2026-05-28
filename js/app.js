@@ -32,28 +32,28 @@ function createViewer(container, { autoRotate = true, enableZoom = false } = {})
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 2.0;
+  renderer.toneMappingExposure = 1.55;
   container.appendChild(renderer.domElement);
 
   const pmremGenerator = new THREE.PMREMGenerator(renderer);
   pmremGenerator.compileEquirectangularShader();
   scene.environment = pmremGenerator.fromScene(new RoomEnvironment(), 0.04).texture;
 
-  const hemi = new THREE.HemisphereLight(0xffffff, 0xe8e4dc, 1.4);
+  const hemi = new THREE.HemisphereLight(0xffffff, 0xe8e4dc, 1.0);
   scene.add(hemi);
 
-  const ambient = new THREE.AmbientLight(0xffffff, 0.8);
+  const ambient = new THREE.AmbientLight(0xffffff, 0.55);
   scene.add(ambient);
 
-  const keyLight = new THREE.DirectionalLight(0xffffff, 1.8);
+  const keyLight = new THREE.DirectionalLight(0xffffff, 1.4);
   keyLight.position.set(4, 6, 5);
   scene.add(keyLight);
 
-  const fillLight = new THREE.DirectionalLight(0xfff8f0, 1.2);
+  const fillLight = new THREE.DirectionalLight(0xfff8f0, 0.85);
   fillLight.position.set(-4, 3, 2);
   scene.add(fillLight);
 
-  const backLight = new THREE.DirectionalLight(0xffffff, 0.9);
+  const backLight = new THREE.DirectionalLight(0xffffff, 0.6);
   backLight.position.set(0, 2, -5);
   scene.add(backLight);
 
@@ -85,9 +85,9 @@ function createViewer(container, { autoRotate = true, enableZoom = false } = {})
       const materials = Array.isArray(child.material) ? child.material : [child.material];
       materials.forEach((mat) => {
         if (!mat) return;
-        mat.envMapIntensity = 1.5;
-        if ('metalness' in mat) mat.metalness = Math.min(mat.metalness, 0.85);
-        if ('roughness' in mat) mat.roughness = Math.max(mat.roughness * 0.85, 0.15);
+        mat.envMapIntensity = 1.1;
+        if ('metalness' in mat) mat.metalness = Math.min(mat.metalness, 0.9);
+        if ('roughness' in mat) mat.roughness = Math.max(mat.roughness * 0.92, 0.2);
       });
     });
   }

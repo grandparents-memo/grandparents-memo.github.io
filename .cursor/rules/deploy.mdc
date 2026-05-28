@@ -1,0 +1,8 @@
+---
+description: Push every code change to GitHub Pages
+alwaysApply: true
+---
+
+After making any change to this project, commit and push to `origin/main` so GitHub Pages stays up to date. Do not wait for the user to ask.
+
+Repository: https://github.com/grandparents-memo/grandparents-memo.github.io

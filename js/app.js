@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { mementos } from './mementos.js';
 
 const galleryEl = document.getElementById('gallery');
@@ -31,23 +32,30 @@ function createViewer(container, { autoRotate = true, enableZoom = false } = {})
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.2;
+  renderer.toneMappingExposure = 2.0;
   container.appendChild(renderer.domElement);
 
-  const ambient = new THREE.AmbientLight(0xffffff, 0.6);
+  const pmremGenerator = new THREE.PMREMGenerator(renderer);
+  pmremGenerator.compileEquirectangularShader();
+  scene.environment = pmremGenerator.fromScene(new RoomEnvironment(), 0.04).texture;
+
+  const hemi = new THREE.HemisphereLight(0xffffff, 0xe8e4dc, 1.4);
+  scene.add(hemi);
+
+  const ambient = new THREE.AmbientLight(0xffffff, 0.8);
   scene.add(ambient);
 
-  const keyLight = new THREE.DirectionalLight(0xffffff, 1.2);
-  keyLight.position.set(3, 5, 4);
+  const keyLight = new THREE.DirectionalLight(0xffffff, 1.8);
+  keyLight.position.set(4, 6, 5);
   scene.add(keyLight);
 
-  const fillLight = new THREE.DirectionalLight(0xc9a96e, 0.4);
-  fillLight.position.set(-3, 2, -2);
+  const fillLight = new THREE.DirectionalLight(0xfff8f0, 1.2);
+  fillLight.position.set(-4, 3, 2);
   scene.add(fillLight);
 
-  const rimLight = new THREE.DirectionalLight(0xffffff, 0.5);
-  rimLight.position.set(0, -2, -4);
-  scene.add(rimLight);
+  const backLight = new THREE.DirectionalLight(0xffffff, 0.9);
+  backLight.position.set(0, 2, -5);
+  scene.add(backLight);
 
   const controls = new OrbitControls(camera, renderer.domElement);
   controls.enableDamping = true;
@@ -71,7 +79,21 @@ function createViewer(container, { autoRotate = true, enableZoom = false } = {})
     renderer.setSize(w, h, false);
   }
 
+  function brightenMaterials(object) {
+    object.traverse((child) => {
+      if (!child.isMesh) return;
+      const materials = Array.isArray(child.material) ? child.material : [child.material];
+      materials.forEach((mat) => {
+        if (!mat) return;
+        mat.envMapIntensity = 1.5;
+        if ('metalness' in mat) mat.metalness = Math.min(mat.metalness, 0.85);
+        if ('roughness' in mat) mat.roughness = Math.max(mat.roughness * 0.85, 0.15);
+      });
+    });
+  }
+
   function fitModel(object) {
+    brightenMaterials(object);
     const box = new THREE.Box3().setFromObject(object);
     const center = box.getCenter(new THREE.Vector3());
     const size = box.getSize(new THREE.Vector3());
@@ -119,6 +141,7 @@ function createViewer(container, { autoRotate = true, enableZoom = false } = {})
       if (animId) cancelAnimationFrame(animId);
       ro.disconnect();
       controls.dispose();
+      pmremGenerator.dispose();
       renderer.dispose();
       if (model) {
         model.traverse((child) => {

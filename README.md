@@ -15,7 +15,7 @@ Then open [http://localhost:8080](http://localhost:8080).
 ## Adding a memento
 
 1. Place your `.glb` file in `assets/`
-2. Add an entry to `js/mementos.js` with `title`, `category`, `era`, `model` path, and `memory` text
+2. Add an entry to `js/mementos.js` with `title`, `model` path, and `memory` text
 
 ## Deploy
 

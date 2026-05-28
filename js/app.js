@@ -169,7 +169,6 @@ function renderGallery() {
         <span class="card-preview-placeholder">◈</span>
       </div>
       <div class="card-body">
-        <p class="card-category">${m.category}</p>
         <h3 class="card-title">${m.title}</h3>
         <p class="card-excerpt">${m.memory}</p>
         <div class="card-action">
@@ -207,10 +206,8 @@ function openDetail(id) {
   const memento = mementos.find((m) => m.id === id);
   if (!memento) return;
 
-  document.getElementById('detail-category').textContent = memento.category;
   document.getElementById('detail-title').textContent = memento.title;
   document.getElementById('detail-memory').textContent = memento.memory;
-  document.getElementById('detail-era').textContent = memento.era;
 
   galleryEl.classList.add('hidden');
   detailEl.classList.remove('hidden');

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grandparents' Mementos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="grain"></div>
+
+  <header class="site-header">
+    <p class="eyebrow">A private collection</p>
+    <h1>Grandparents' Mementos</h1>
+    <p class="subtitle">Objects that hold memories — preserved in three dimensions</p>
+  </header>
+
+  <main>
+    <section id="gallery" class="gallery" aria-label="Memento gallery"></section>
+
+    <section id="detail" class="detail hidden" aria-label="Memento detail" aria-hidden="true">
+      <button class="back-btn" id="back-btn" aria-label="Back to gallery">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M19 12H5M12 19l-7-7 7-7"/>
+        </svg>
+        Back to gallery
+      </button>
+
+      <div class="detail-layout">
+        <div class="viewer-panel">
+          <div id="viewer-container" class="viewer-container"></div>
+          <p class="viewer-hint">Drag to rotate · Scroll to zoom</p>
+        </div>
+
+        <aside class="detail-content">
+          <p class="detail-eyebrow" id="detail-category"></p>
+          <h2 id="detail-title"></h2>
+          <p class="detail-memory" id="detail-memory"></p>
+          <div class="detail-meta">
+            <span id="detail-era"></span>
+          </div>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>Made with love · Memories preserved forever</p>
+  </footer>
+
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.162.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.162.0/examples/jsm/"
+    }
+  }
+  </script>
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>

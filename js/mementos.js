@@ -27,4 +27,11 @@ export const mementos = [
     memory:
       'This delicate metal flower graced the windowsill in their living room, catching the afternoon light. Grandpa made it himself in his workshop, each petal hammered by hand. It never wilted — a permanent bloom in a home full of love.',
   },
+  {
+    id: 'vintage-electric-fan',
+    title: 'Vintage Electric Fan',
+    model: 'assets/vintage-electric-fan.glb',
+    memory:
+      'On hot summer afternoons, this fan hummed steadily in the corner of their bedroom. Grandpa would set it to the lowest speed so it wouldn\'t blow the papers off his desk. The gentle whir became the soundtrack of lazy afternoons spent listening to their stories.',
+  },
 ];

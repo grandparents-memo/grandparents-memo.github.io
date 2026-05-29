@@ -15,14 +15,22 @@ const isMobile =
   window.matchMedia('(pointer: coarse)').matches;
 
 let activeViewer = null;
+const cardViewers = new Map();
+let cardObserver = null;
+const pendingCardLoads = [];
+let processingCardQueue = false;
 
 const dracoLoader = new DRACOLoader();
 dracoLoader.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.162.0/examples/jsm/libs/draco/gltf/');
 
-function createGltfLoader() {
+function createGltfLoader(useDraco) {
   const loader = new GLTFLoader();
-  loader.setDRACOLoader(dracoLoader);
+  if (useDraco) loader.setDRACOLoader(dracoLoader);
   return loader;
+}
+
+function modelForDevice(memento) {
+  return isMobile ? memento.modelMobile : memento.model;
 }
 
 function createLoadingOverlay(container, message = 'Loading model…') {
@@ -36,7 +44,10 @@ function createLoadingOverlay(container, message = 'Loading model…') {
   return overlay;
 }
 
-function createViewer(container, { autoRotate = false, enableZoom = true, lowPower = false } = {}) {
+function createViewer(
+  container,
+  { autoRotate = false, enableZoom = true, lowPower = false, useDraco = false } = {}
+) {
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(45, 1, 0.01, 100);
   camera.position.set(0, 0.5, 2.5);
@@ -80,7 +91,7 @@ function createViewer(container, { autoRotate = false, enableZoom = true, lowPow
   controls.minDistance = 0.5;
   controls.maxDistance = 8;
 
-  const loader = createGltfLoader();
+  const loader = createGltfLoader(useDraco);
   let model = null;
   let animId = null;
   let disposed = false;
@@ -140,8 +151,11 @@ function createViewer(container, { autoRotate = false, enableZoom = true, lowPow
       resize();
       animate();
     } catch (err) {
-      overlay.querySelector('.loading-text').textContent = 'Failed to load model';
+      if (!disposed) {
+        overlay.querySelector('.loading-text').textContent = 'Failed to load model';
+      }
       console.error(err);
+      throw err;
     }
   }
 
@@ -174,13 +188,88 @@ function createViewer(container, { autoRotate = false, enableZoom = true, lowPow
   };
 }
 
+function disposeCardViewers() {
+  cardViewers.forEach((viewer) => viewer.dispose());
+  cardViewers.clear();
+  cardObserver?.disconnect();
+  cardObserver = null;
+  pendingCardLoads.length = 0;
+  processingCardQueue = false;
+}
+
+async function loadCardPreview(id, modelUrl) {
+  if (cardViewers.has(id)) return;
+
+  const previewEl = document.getElementById(`preview-${id}`);
+  if (!previewEl) return;
+
+  previewEl.querySelector('.card-preview-loading')?.remove();
+
+  const viewer = createViewer(previewEl, {
+    autoRotate: true,
+    enableZoom: false,
+    lowPower: false,
+    useDraco: false,
+  });
+  cardViewers.set(id, viewer);
+  await viewer.loadModel(modelUrl);
+}
+
+async function processCardLoadQueue() {
+  if (processingCardQueue || pendingCardLoads.length === 0) return;
+  processingCardQueue = true;
+
+  const { id, modelUrl } = pendingCardLoads.shift();
+  try {
+    await loadCardPreview(id, modelUrl);
+  } catch {
+    // Continue queue even if one preview fails.
+  }
+
+  processingCardQueue = false;
+  processCardLoadQueue();
+}
+
+function enqueueCardPreview(id, modelUrl) {
+  if (cardViewers.has(id) || pendingCardLoads.some((item) => item.id === id)) return;
+  pendingCardLoads.push({ id, modelUrl });
+  processCardLoadQueue();
+}
+
+function setupDesktopGalleryPreviews() {
+  if (isMobile) return;
+
+  cardObserver = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        const id = entry.target.dataset.id;
+        const memento = mementos.find((m) => m.id === id);
+        if (memento) enqueueCardPreview(id, memento.model);
+        cardObserver.unobserve(entry.target);
+      });
+    },
+    { rootMargin: '80px' }
+  );
+
+  galleryEl.querySelectorAll('.card').forEach((card) => {
+    cardObserver.observe(card);
+  });
+}
+
 function renderGallery() {
+  disposeCardViewers();
+
   galleryEl.innerHTML = mementos
-    .map(
-      (m) => `
+    .map((m) => {
+      const preview = isMobile
+        ? `<img src="${m.poster}" alt="${m.title}" loading="lazy" width="800" height="600">`
+        : `<div class="card-preview-loading"><div class="loading-spinner"></div></div>`;
+
+      return `
     <article class="card" data-id="${m.id}" tabindex="0" role="button" aria-label="View ${m.title}">
-      <div class="card-preview">
-        <img src="${m.poster}" alt="${m.title}" loading="lazy" width="800" height="600">
+      <div class="card-preview" id="preview-${m.id}">
+        ${preview}
       </div>
       <div class="card-body">
         <h3 class="card-title">${m.title}</h3>
@@ -193,8 +282,8 @@ function renderGallery() {
         </div>
       </div>
     </article>
-  `
-    )
+  `;
+    })
     .join('');
 
   galleryEl.querySelectorAll('.card').forEach((card) => {
@@ -207,6 +296,8 @@ function renderGallery() {
       }
     });
   });
+
+  setupDesktopGalleryPreviews();
 }
 
 function openDetail(id) {
@@ -232,8 +323,9 @@ function openDetail(id) {
     autoRotate: false,
     enableZoom: true,
     lowPower: isMobile,
+    useDraco: isMobile,
   });
-  activeViewer.loadModel(memento.model);
+  activeViewer.loadModel(modelForDevice(memento));
 
   history.pushState({ detail: id }, '', `#${id}`);
   window.scrollTo({ top: 0, behavior: 'smooth' });

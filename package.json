@@ -1,0 +1,21 @@
+{
+  "name": "grandparents-memo",
+  "version": "1.0.0",
+  "description": "A simple 3D gallery to preserve and share mementos — each object is displayed as an interactive GLB model with a written memory.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/grandparents-memo/grandparents-memo.github.io.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/grandparents-memo/grandparents-memo.github.io/issues"
+  },
+  "homepage": "https://github.com/grandparents-memo/grandparents-memo.github.io#readme"
+}

@@ -14,15 +14,15 @@ Then open [http://localhost:8080](http://localhost:8080).
 
 ## Adding a memento
 
-1. Place your `.glb` file in `assets/`
-2. Optimize it for the web (recommended — reduces ~55 MB files to ~1–3 MB):
+1. Place your original `.glb` file in `assets/original/`
+2. Create a mobile-optimized copy:
 
 ```bash
-npx @gltf-transform/cli optimize assets/your-model.glb assets/your-model.glb \
-  --compress draco --texture-compress webp --texture-size 1024
+npx @gltf-transform/cli optimize assets/original/your-model.glb assets/mobile/your-model.glb \
+  --compress draco --texture-compress webp --texture-size 512 --simplify-ratio 0.4
 ```
 
-3. Add an entry to `js/mementos.js` with `title`, `model` path, `poster` path, and `memory` text
+3. Add an entry to `js/mementos.js` with `title`, `model` (original), `modelMobile`, `poster`, and `memory`
 4. Generate a gallery poster image:
 
 ```bash

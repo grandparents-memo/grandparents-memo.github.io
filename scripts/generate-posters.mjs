@@ -9,11 +9,11 @@ const root = join(__dirname, '..');
 const postersDir = join(root, 'assets', 'posters');
 
 const mementos = [
-  { id: 'black-handbag', model: 'assets/black-handbag.glb' },
-  { id: 'bronze-bird', model: 'assets/bronze-bird.glb' },
-  { id: 'buddha-pendant', model: 'assets/buddha-pendant.glb' },
-  { id: 'flower-metal-sculpture', model: 'assets/flower-metal-sculpture.glb' },
-  { id: 'vintage-electric-fan', model: 'assets/vintage-electric-fan.glb' },
+  { id: 'black-handbag', model: 'assets/original/black-handbag.glb' },
+  { id: 'bronze-bird', model: 'assets/original/bronze-bird.glb' },
+  { id: 'buddha-pendant', model: 'assets/original/buddha-pendant.glb' },
+  { id: 'flower-metal-sculpture', model: 'assets/original/flower-metal-sculpture.glb' },
+  { id: 'vintage-electric-fan', model: 'assets/original/vintage-electric-fan.glb' },
 ];
 
 const mime = {

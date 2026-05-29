@@ -16,9 +16,6 @@ const isMobile =
 
 let activeViewer = null;
 const cardViewers = new Map();
-let cardObserver = null;
-const pendingCardLoads = [];
-let processingCardQueue = false;
 
 const dracoLoader = new DRACOLoader();
 dracoLoader.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.162.0/examples/jsm/libs/draco/gltf/');
@@ -191,10 +188,6 @@ function createViewer(
 function disposeCardViewers() {
   cardViewers.forEach((viewer) => viewer.dispose());
   cardViewers.clear();
-  cardObserver?.disconnect();
-  cardObserver = null;
-  pendingCardLoads.length = 0;
-  processingCardQueue = false;
 }
 
 async function loadCardPreview(id, modelUrl) {
@@ -215,45 +208,11 @@ async function loadCardPreview(id, modelUrl) {
   await viewer.loadModel(modelUrl);
 }
 
-async function processCardLoadQueue() {
-  if (processingCardQueue || pendingCardLoads.length === 0) return;
-  processingCardQueue = true;
-
-  const { id, modelUrl } = pendingCardLoads.shift();
-  try {
-    await loadCardPreview(id, modelUrl);
-  } catch {
-    // Continue queue even if one preview fails.
-  }
-
-  processingCardQueue = false;
-  processCardLoadQueue();
-}
-
-function enqueueCardPreview(id, modelUrl) {
-  if (cardViewers.has(id) || pendingCardLoads.some((item) => item.id === id)) return;
-  pendingCardLoads.push({ id, modelUrl });
-  processCardLoadQueue();
-}
-
 function setupDesktopGalleryPreviews() {
   if (isMobile) return;
 
-  cardObserver = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (!entry.isIntersecting) return;
-        const id = entry.target.dataset.id;
-        const memento = mementos.find((m) => m.id === id);
-        if (memento) enqueueCardPreview(id, memento.model);
-        cardObserver.unobserve(entry.target);
-      });
-    },
-    { rootMargin: '80px' }
-  );
-
-  galleryEl.querySelectorAll('.card').forEach((card) => {
-    cardObserver.observe(card);
+  mementos.forEach((m) => {
+    loadCardPreview(m.id, m.model);
   });
 }
 

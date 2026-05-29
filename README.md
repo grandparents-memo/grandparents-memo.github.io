@@ -22,7 +22,13 @@ npx @gltf-transform/cli optimize assets/your-model.glb assets/your-model.glb \
   --compress draco --texture-compress webp --texture-size 1024
 ```
 
-3. Add an entry to `js/mementos.js` with `title`, `model` path, and `memory` text
+3. Add an entry to `js/mementos.js` with `title`, `model` path, `poster` path, and `memory` text
+4. Generate a gallery poster image:
+
+```bash
+npm install puppeteer
+node scripts/generate-posters.mjs
+```
 
 ## Deploy
 

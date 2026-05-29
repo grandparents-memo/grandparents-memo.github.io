@@ -15,8 +15,6 @@ const isMobile =
   window.matchMedia('(pointer: coarse)').matches;
 
 let activeViewer = null;
-const cardViewers = new Map();
-let cardObserver = null;
 
 const dracoLoader = new DRACOLoader();
 dracoLoader.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.162.0/examples/jsm/libs/draco/gltf/');
@@ -38,7 +36,7 @@ function createLoadingOverlay(container, message = 'Loading model…') {
   return overlay;
 }
 
-function createViewer(container, { autoRotate = true, enableZoom = false, lowPower = false } = {}) {
+function createViewer(container, { autoRotate = false, enableZoom = true, lowPower = false } = {}) {
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(45, 1, 0.01, 100);
   camera.position.set(0, 0.5, 2.5);
@@ -58,11 +56,8 @@ function createViewer(container, { autoRotate = true, enableZoom = false, lowPow
   pmremGenerator.compileEquirectangularShader();
   scene.environment = pmremGenerator.fromScene(new RoomEnvironment(), 0.04).texture;
 
-  const hemi = new THREE.HemisphereLight(0xffffff, 0xe8e4dc, 1.0);
-  scene.add(hemi);
-
-  const ambient = new THREE.AmbientLight(0xffffff, 0.55);
-  scene.add(ambient);
+  scene.add(new THREE.HemisphereLight(0xffffff, 0xe8e4dc, 1.0));
+  scene.add(new THREE.AmbientLight(0xffffff, 0.55));
 
   const keyLight = new THREE.DirectionalLight(0xffffff, 1.4);
   keyLight.position.set(4, 6, 5);
@@ -179,60 +174,13 @@ function createViewer(container, { autoRotate = true, enableZoom = false, lowPow
   };
 }
 
-function disposeCardViewers() {
-  cardViewers.forEach((viewer) => viewer.dispose());
-  cardViewers.clear();
-  cardObserver?.disconnect();
-  cardObserver = null;
-}
-
-function loadCardPreview(id, modelUrl) {
-  if (cardViewers.has(id)) return;
-
-  const previewEl = document.getElementById(`preview-${id}`);
-  if (!previewEl) return;
-
-  previewEl.querySelector('.card-preview-placeholder')?.remove();
-  const viewer = createViewer(previewEl, {
-    autoRotate: true,
-    enableZoom: false,
-    lowPower: true,
-  });
-  cardViewers.set(id, viewer);
-  viewer.loadModel(modelUrl);
-}
-
-function setupLazyGalleryPreviews() {
-  if (isMobile) return;
-
-  cardObserver = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (!entry.isIntersecting) return;
-        const id = entry.target.dataset.id;
-        const memento = mementos.find((m) => m.id === id);
-        if (memento) loadCardPreview(id, memento.model);
-        cardObserver.unobserve(entry.target);
-      });
-    },
-    { rootMargin: '120px' }
-  );
-
-  galleryEl.querySelectorAll('.card').forEach((card) => {
-    cardObserver.observe(card);
-  });
-}
-
 function renderGallery() {
-  disposeCardViewers();
-
   galleryEl.innerHTML = mementos
     .map(
       (m) => `
     <article class="card" data-id="${m.id}" tabindex="0" role="button" aria-label="View ${m.title}">
-      <div class="card-preview" id="preview-${m.id}">
-        <span class="card-preview-placeholder">◈</span>
-        ${isMobile ? '<span class="card-preview-label">Tap to view in 3D</span>' : ''}
+      <div class="card-preview">
+        <img src="${m.poster}" alt="${m.title}" loading="lazy" width="800" height="600">
       </div>
       <div class="card-body">
         <h3 class="card-title">${m.title}</h3>
@@ -259,8 +207,6 @@ function renderGallery() {
       }
     });
   });
-
-  setupLazyGalleryPreviews();
 }
 
 function openDetail(id) {
@@ -275,8 +221,6 @@ function openDetail(id) {
   detailEl.setAttribute('aria-hidden', 'false');
   document.querySelector('.site-header').style.display = 'none';
   document.querySelector('.site-footer').style.display = 'none';
-
-  disposeCardViewers();
 
   if (activeViewer) {
     activeViewer.dispose();
@@ -307,8 +251,6 @@ function closeDetail() {
     activeViewer = null;
   }
   viewerContainer.innerHTML = '';
-
-  setupLazyGalleryPreviews();
 
   history.pushState(null, '', window.location.pathname);
 }

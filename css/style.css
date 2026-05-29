@@ -120,31 +120,12 @@ body {
   overflow: hidden;
 }
 
-.card-preview canvas {
-  width: 100% !important;
-  height: 100% !important;
-}
-
-.card-preview-placeholder {
-  font-family: var(--font-serif);
-  font-size: 3rem;
-  color: var(--accent);
-  opacity: 0.3;
-}
-
-.card-preview-label {
-  position: absolute;
-  bottom: 1rem;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 0.7rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--text-muted);
-  background: rgba(255, 255, 255, 0.85);
-  padding: 0.35rem 0.75rem;
-  border-radius: 999px;
-  z-index: 1;
+.card-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  padding: 1rem;
 }
 
 .card-preview::after {

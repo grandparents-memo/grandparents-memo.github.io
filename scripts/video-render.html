@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.162.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.162.0/examples/jsm/"
+    }
+  }
+  </script>
+  <style>
+    body { margin: 0; background: #eeede9; }
+    canvas { display: block; width: 800px; height: 600px; }
+  </style>
+</head>
+<body>
+  <canvas id="c" width="800" height="600"></canvas>
+  <script type="module">
+    import * as THREE from 'three';
+    import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+    import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
+    import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
+    import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+
+    const params = new URLSearchParams(location.search);
+    const modelUrl = params.get('model');
+
+    const canvas = document.getElementById('c');
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+    renderer.setSize(800, 600, false);
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.55;
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(45, 800 / 600, 0.01, 100);
+    camera.position.set(0, 0.5, 2.5);
+
+    const pmrem = new THREE.PMREMGenerator(renderer);
+    scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+
+    scene.add(new THREE.HemisphereLight(0xffffff, 0xe8e4dc, 1.0));
+    scene.add(new THREE.AmbientLight(0xffffff, 0.55));
+    const key = new THREE.DirectionalLight(0xffffff, 1.4);
+    key.position.set(4, 6, 5);
+    scene.add(key);
+    const fill = new THREE.DirectionalLight(0xfff8f0, 0.85);
+    fill.position.set(-4, 3, 2);
+    scene.add(fill);
+
+    const draco = new DRACOLoader();
+    draco.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.162.0/examples/jsm/libs/draco/gltf/');
+    const loader = new GLTFLoader();
+    loader.setDRACOLoader(draco);
+    loader.setMeshoptDecoder(MeshoptDecoder);
+
+    const gltf = await loader.loadAsync(modelUrl);
+    const object = gltf.scene;
+
+    object.traverse((child) => {
+      if (!child.isMesh) return;
+      const mats = Array.isArray(child.material) ? child.material : [child.material];
+      mats.forEach((mat) => {
+        if (!mat) return;
+        mat.envMapIntensity = 1.1;
+        if ('metalness' in mat) mat.metalness = Math.min(mat.metalness, 0.9);
+        if ('roughness' in mat) mat.roughness = Math.max(mat.roughness * 0.92, 0.2);
+      });
+    });
+
+    const box = new THREE.Box3().setFromObject(object);
+    const center = box.getCenter(new THREE.Vector3());
+    const size = box.getSize(new THREE.Vector3());
+    const maxDim = Math.max(size.x, size.y, size.z);
+    const scale = 1.6 / maxDim;
+    object.position.sub(center.multiplyScalar(scale));
+    object.scale.setScalar(scale);
+    scene.add(object);
+
+    window.renderFrame = (index, total) => {
+      object.rotation.y = (index / total) * Math.PI * 2 + Math.PI / 6;
+      renderer.render(scene, camera);
+    };
+
+    window.renderFrame(0, 72);
+    window.__VIDEO_READY__ = true;
+  </script>
+</body>
+</html>

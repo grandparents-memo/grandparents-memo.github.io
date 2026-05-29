@@ -16,7 +16,6 @@ const isMobile =
   window.matchMedia('(pointer: coarse)').matches;
 
 let activeViewer = null;
-const cardViewers = new Map();
 
 const dracoLoader = new DRACOLoader();
 dracoLoader.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.162.0/examples/jsm/libs/draco/gltf/');
@@ -187,50 +186,13 @@ function createViewer(
   };
 }
 
-function disposeCardViewers() {
-  cardViewers.forEach((viewer) => viewer.dispose());
-  cardViewers.clear();
-}
-
-async function loadCardPreview(id, modelUrl) {
-  if (cardViewers.has(id)) return;
-
-  const previewEl = document.getElementById(`preview-${id}`);
-  if (!previewEl) return;
-
-  previewEl.querySelector('.card-preview-loading')?.remove();
-
-  const viewer = createViewer(previewEl, {
-    autoRotate: true,
-    enableZoom: false,
-    lowPower: false,
-    useMeshopt: true,
-  });
-  cardViewers.set(id, viewer);
-  await viewer.loadModel(modelUrl);
-}
-
-function setupDesktopGalleryPreviews() {
-  if (isMobile) return;
-
-  mementos.forEach((m) => {
-    loadCardPreview(m.id, m.model);
-  });
-}
-
 function renderGallery() {
-  disposeCardViewers();
-
   galleryEl.innerHTML = mementos
-    .map((m) => {
-      const preview = isMobile
-        ? `<img src="${m.poster}" alt="${m.title}" loading="lazy" width="800" height="600">`
-        : `<div class="card-preview-loading"><div class="loading-spinner"></div></div>`;
-
-      return `
+    .map(
+      (m) => `
     <article class="card" data-id="${m.id}" tabindex="0" role="button" aria-label="View ${m.title}">
-      <div class="card-preview" id="preview-${m.id}">
-        ${preview}
+      <div class="card-preview">
+        <video autoplay playsinline loop muted src="${m.video}" aria-label="${m.title}"></video>
       </div>
       <div class="card-body">
         <h3 class="card-title">${m.title}</h3>
@@ -243,8 +205,8 @@ function renderGallery() {
         </div>
       </div>
     </article>
-  `;
-    })
+  `
+    )
     .join('');
 
   galleryEl.querySelectorAll('.card').forEach((card) => {
@@ -257,8 +219,6 @@ function renderGallery() {
       }
     });
   });
-
-  setupDesktopGalleryPreviews();
 }
 
 function openDetail(id) {

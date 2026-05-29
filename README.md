@@ -15,7 +15,14 @@ Then open [http://localhost:8080](http://localhost:8080).
 ## Adding a memento
 
 1. Place your original `.glb` file in `assets/original/`
-2. Create a mobile-optimized copy:
+2. Halve texture resolution if needed (4096→2048):
+
+```bash
+npx @gltf-transform/cli resize assets/original/your-model.glb /tmp/your-model.glb --width 2048 --height 2048
+mv /tmp/your-model.glb assets/original/your-model.glb
+```
+
+3. Create a mobile-optimized copy:
 
 ```bash
 npx @gltf-transform/cli optimize assets/original/your-model.glb assets/mobile/your-model.glb \

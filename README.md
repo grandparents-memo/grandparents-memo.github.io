@@ -15,11 +15,11 @@ Then open [http://localhost:8080](http://localhost:8080).
 ## Adding a memento
 
 1. Place your source `.glb` file in `assets/original/` (or use Downloads as source)
-2. Create the detail model (half mesh, 2048px textures):
+2. Create the detail model (half mesh, 512px textures):
 
 ```bash
 npx @gltf-transform/cli optimize source.glb assets/original/your-model.glb \
-  --simplify-ratio 0.5 --texture-size 2048
+  --simplify-ratio 0.5 --texture-size 512
 ```
 
 3. Create the desktop gallery copy (half mesh, 2048px, Draco):

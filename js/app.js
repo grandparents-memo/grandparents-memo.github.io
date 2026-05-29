@@ -192,7 +192,7 @@ function disposeCardViewers() {
   cardViewers.clear();
 }
 
-async function loadCardPreview(id, modelUrl, useDraco = false) {
+async function loadCardPreview(id, modelUrl) {
   if (cardViewers.has(id)) return;
 
   const previewEl = document.getElementById(`preview-${id}`);
@@ -204,7 +204,7 @@ async function loadCardPreview(id, modelUrl, useDraco = false) {
     autoRotate: true,
     enableZoom: false,
     lowPower: false,
-    useDraco,
+    useMeshopt: true,
   });
   cardViewers.set(id, viewer);
   await viewer.loadModel(modelUrl);
@@ -214,7 +214,7 @@ function setupDesktopGalleryPreviews() {
   if (isMobile) return;
 
   mementos.forEach((m) => {
-    loadCardPreview(m.id, m.modelGallery, true);
+    loadCardPreview(m.id, m.model);
   });
 }
 

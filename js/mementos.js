@@ -3,7 +3,6 @@ export const mementos = [
     id: 'black-handbag',
     title: 'Black Handbag',
     model: 'assets/original/black-handbag.glb',
-    modelGallery: 'assets/desktop/black-handbag.glb',
     modelMobile: 'assets/mobile/black-handbag.glb',
     poster: 'assets/posters/black-handbag.webp',
     memory:
@@ -13,7 +12,6 @@ export const mementos = [
     id: 'bronze-bird',
     title: 'Bronze Bird Sculpture',
     model: 'assets/original/bronze-bird.glb',
-    modelGallery: 'assets/desktop/bronze-bird.glb',
     modelMobile: 'assets/mobile/bronze-bird.glb',
     poster: 'assets/posters/bronze-bird.webp',
     memory:
@@ -23,7 +21,6 @@ export const mementos = [
     id: 'buddha-pendant',
     title: 'Buddha Pendant',
     model: 'assets/original/buddha-pendant.glb',
-    modelGallery: 'assets/desktop/buddha-pendant.glb',
     modelMobile: 'assets/mobile/buddha-pendant.glb',
     poster: 'assets/posters/buddha-pendant.webp',
     memory:
@@ -33,7 +30,6 @@ export const mementos = [
     id: 'flower-metal-sculpture',
     title: 'Flower Metal Sculpture',
     model: 'assets/original/flower-metal-sculpture.glb',
-    modelGallery: 'assets/desktop/flower-metal-sculpture.glb',
     modelMobile: 'assets/mobile/flower-metal-sculpture.glb',
     poster: 'assets/posters/flower-metal-sculpture.webp',
     memory:
@@ -43,7 +39,6 @@ export const mementos = [
     id: 'vintage-electric-fan',
     title: 'Vintage Electric Fan',
     model: 'assets/original/vintage-electric-fan.glb',
-    modelGallery: 'assets/desktop/vintage-electric-fan.glb',
     modelMobile: 'assets/mobile/vintage-electric-fan.glb',
     poster: 'assets/posters/vintage-electric-fan.webp',
     memory:

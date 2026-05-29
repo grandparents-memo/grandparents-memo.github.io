@@ -14,30 +14,23 @@ Then open [http://localhost:8080](http://localhost:8080).
 
 ## Adding a memento
 
-1. Place your source `.glb` file in `assets/original/` (or use Downloads as source)
-2. Create the detail model (half mesh, 512px textures):
+1. Place your source `.glb` file in Downloads or project root
+2. Create the desktop/detail model (half mesh, 512px textures):
 
 ```bash
 npx @gltf-transform/cli optimize source.glb assets/original/your-model.glb \
   --simplify-ratio 0.5 --texture-size 512
 ```
 
-3. Create the desktop gallery copy (half mesh, 2048px, Draco):
+3. Create a mobile-optimized copy (256px textures):
 
 ```bash
-npx @gltf-transform/cli optimize source.glb assets/desktop/your-model.glb \
-  --compress draco --texture-compress webp --texture-size 2048 --simplify-ratio 0.5
+npx @gltf-transform/cli optimize source.glb assets/mobile/your-model.glb \
+  --compress draco --texture-compress webp --texture-size 256 --simplify-ratio 0.4
 ```
 
-4. Create a mobile-optimized copy:
-
-```bash
-npx @gltf-transform/cli optimize assets/original/your-model.glb assets/mobile/your-model.glb \
-  --compress draco --texture-compress webp --texture-size 512 --simplify-ratio 0.4
-```
-
-5. Add an entry to `js/mementos.js` with `title`, `model` (detail), `modelGallery`, `modelMobile`, `poster`, and `memory`
-6. Generate a gallery poster image:
+4. Add an entry to `js/mementos.js` with `title`, `model`, `modelMobile`, `poster`, and `memory`
+5. Generate a gallery poster image:
 
 ```bash
 npm install puppeteer

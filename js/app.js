@@ -190,7 +190,7 @@ function disposeCardViewers() {
   cardViewers.clear();
 }
 
-async function loadCardPreview(id, modelUrl) {
+async function loadCardPreview(id, modelUrl, useDraco = false) {
   if (cardViewers.has(id)) return;
 
   const previewEl = document.getElementById(`preview-${id}`);
@@ -202,7 +202,7 @@ async function loadCardPreview(id, modelUrl) {
     autoRotate: true,
     enableZoom: false,
     lowPower: false,
-    useDraco: false,
+    useDraco,
   });
   cardViewers.set(id, viewer);
   await viewer.loadModel(modelUrl);
@@ -212,7 +212,7 @@ function setupDesktopGalleryPreviews() {
   if (isMobile) return;
 
   mementos.forEach((m) => {
-    loadCardPreview(m.id, m.model);
+    loadCardPreview(m.id, m.modelGallery, true);
   });
 }
 

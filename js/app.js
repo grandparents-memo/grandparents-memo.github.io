@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
+import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { mementos } from './mementos.js';
 
@@ -20,9 +21,10 @@ const cardViewers = new Map();
 const dracoLoader = new DRACOLoader();
 dracoLoader.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.162.0/examples/jsm/libs/draco/gltf/');
 
-function createGltfLoader(useDraco) {
+function createGltfLoader({ useDraco = false, useMeshopt = false } = {}) {
   const loader = new GLTFLoader();
   if (useDraco) loader.setDRACOLoader(dracoLoader);
+  if (useMeshopt) loader.setMeshoptDecoder(MeshoptDecoder);
   return loader;
 }
 
@@ -43,7 +45,7 @@ function createLoadingOverlay(container, message = 'Loading model…') {
 
 function createViewer(
   container,
-  { autoRotate = false, enableZoom = true, lowPower = false, useDraco = false } = {}
+  { autoRotate = false, enableZoom = true, lowPower = false, useDraco = false, useMeshopt = false } = {}
 ) {
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(45, 1, 0.01, 100);
@@ -88,7 +90,7 @@ function createViewer(
   controls.minDistance = 0.5;
   controls.maxDistance = 8;
 
-  const loader = createGltfLoader(useDraco);
+  const loader = createGltfLoader({ useDraco, useMeshopt });
   let model = null;
   let animId = null;
   let disposed = false;
@@ -283,6 +285,7 @@ function openDetail(id) {
     enableZoom: true,
     lowPower: isMobile,
     useDraco: isMobile,
+    useMeshopt: !isMobile,
   });
   activeViewer.loadModel(modelForDevice(memento));
 

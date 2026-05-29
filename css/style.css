@@ -132,6 +132,21 @@ body {
   opacity: 0.3;
 }
 
+.card-preview-label {
+  position: absolute;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  background: rgba(255, 255, 255, 0.85);
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  z-index: 1;
+}
+
 .card-preview::after {
   content: '';
   position: absolute;

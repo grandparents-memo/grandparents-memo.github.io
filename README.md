@@ -15,7 +15,14 @@ Then open [http://localhost:8080](http://localhost:8080).
 ## Adding a memento
 
 1. Place your `.glb` file in `assets/`
-2. Add an entry to `js/mementos.js` with `title`, `model` path, and `memory` text
+2. Optimize it for the web (recommended — reduces ~55 MB files to ~1–3 MB):
+
+```bash
+npx @gltf-transform/cli optimize assets/your-model.glb assets/your-model.glb \
+  --compress draco --texture-compress webp --texture-size 1024
+```
+
+3. Add an entry to `js/mementos.js` with `title`, `model` path, and `memory` text
 
 ## Deploy
 

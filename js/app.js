@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { mementos } from './mementos.js';
 
@@ -9,27 +10,45 @@ const detailEl = document.getElementById('detail');
 const backBtn = document.getElementById('back-btn');
 const viewerContainer = document.getElementById('viewer-container');
 
+const isMobile =
+  window.matchMedia('(max-width: 900px)').matches ||
+  window.matchMedia('(pointer: coarse)').matches;
+
 let activeViewer = null;
 const cardViewers = new Map();
+let cardObserver = null;
 
-function createLoadingOverlay(container) {
+const dracoLoader = new DRACOLoader();
+dracoLoader.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.162.0/examples/jsm/libs/draco/gltf/');
+
+function createGltfLoader() {
+  const loader = new GLTFLoader();
+  loader.setDRACOLoader(dracoLoader);
+  return loader;
+}
+
+function createLoadingOverlay(container, message = 'Loading model…') {
   const overlay = document.createElement('div');
   overlay.className = 'loading-overlay';
   overlay.innerHTML = `
     <div class="loading-spinner"></div>
-    <span class="loading-text">Loading model…</span>
+    <span class="loading-text">${message}</span>
   `;
   container.appendChild(overlay);
   return overlay;
 }
 
-function createViewer(container, { autoRotate = true, enableZoom = false } = {}) {
+function createViewer(container, { autoRotate = true, enableZoom = false, lowPower = false } = {}) {
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(45, 1, 0.01, 100);
   camera.position.set(0, 0.5, 2.5);
 
-  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  const renderer = new THREE.WebGLRenderer({
+    antialias: !lowPower,
+    alpha: true,
+    powerPreference: lowPower ? 'low-power' : 'high-performance',
+  });
+  renderer.setPixelRatio(lowPower ? 1 : Math.min(window.devicePixelRatio, 2));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.55;
@@ -66,7 +85,7 @@ function createViewer(container, { autoRotate = true, enableZoom = false } = {})
   controls.minDistance = 0.5;
   controls.maxDistance = 8;
 
-  const loader = new GLTFLoader();
+  const loader = createGltfLoader();
   let model = null;
   let animId = null;
   let disposed = false;
@@ -160,13 +179,60 @@ function createViewer(container, { autoRotate = true, enableZoom = false } = {})
   };
 }
 
+function disposeCardViewers() {
+  cardViewers.forEach((viewer) => viewer.dispose());
+  cardViewers.clear();
+  cardObserver?.disconnect();
+  cardObserver = null;
+}
+
+function loadCardPreview(id, modelUrl) {
+  if (cardViewers.has(id)) return;
+
+  const previewEl = document.getElementById(`preview-${id}`);
+  if (!previewEl) return;
+
+  previewEl.querySelector('.card-preview-placeholder')?.remove();
+  const viewer = createViewer(previewEl, {
+    autoRotate: true,
+    enableZoom: false,
+    lowPower: true,
+  });
+  cardViewers.set(id, viewer);
+  viewer.loadModel(modelUrl);
+}
+
+function setupLazyGalleryPreviews() {
+  if (isMobile) return;
+
+  cardObserver = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        const id = entry.target.dataset.id;
+        const memento = mementos.find((m) => m.id === id);
+        if (memento) loadCardPreview(id, memento.model);
+        cardObserver.unobserve(entry.target);
+      });
+    },
+    { rootMargin: '120px' }
+  );
+
+  galleryEl.querySelectorAll('.card').forEach((card) => {
+    cardObserver.observe(card);
+  });
+}
+
 function renderGallery() {
+  disposeCardViewers();
+
   galleryEl.innerHTML = mementos
     .map(
       (m) => `
     <article class="card" data-id="${m.id}" tabindex="0" role="button" aria-label="View ${m.title}">
       <div class="card-preview" id="preview-${m.id}">
         <span class="card-preview-placeholder">◈</span>
+        ${isMobile ? '<span class="card-preview-label">Tap to view in 3D</span>' : ''}
       </div>
       <div class="card-body">
         <h3 class="card-title">${m.title}</h3>
@@ -183,13 +249,6 @@ function renderGallery() {
     )
     .join('');
 
-  mementos.forEach((m) => {
-    const previewEl = document.getElementById(`preview-${m.id}`);
-    const viewer = createViewer(previewEl, { autoRotate: true, enableZoom: false });
-    cardViewers.set(m.id, viewer);
-    viewer.loadModel(m.model);
-  });
-
   galleryEl.querySelectorAll('.card').forEach((card) => {
     const open = () => openDetail(card.dataset.id);
     card.addEventListener('click', open);
@@ -200,6 +259,8 @@ function renderGallery() {
       }
     });
   });
+
+  setupLazyGalleryPreviews();
 }
 
 function openDetail(id) {
@@ -215,13 +276,19 @@ function openDetail(id) {
   document.querySelector('.site-header').style.display = 'none';
   document.querySelector('.site-footer').style.display = 'none';
 
+  disposeCardViewers();
+
   if (activeViewer) {
     activeViewer.dispose();
     activeViewer = null;
   }
 
   viewerContainer.innerHTML = '';
-  activeViewer = createViewer(viewerContainer, { autoRotate: false, enableZoom: true });
+  activeViewer = createViewer(viewerContainer, {
+    autoRotate: false,
+    enableZoom: true,
+    lowPower: isMobile,
+  });
   activeViewer.loadModel(memento.model);
 
   history.pushState({ detail: id }, '', `#${id}`);
@@ -240,6 +307,8 @@ function closeDetail() {
     activeViewer = null;
   }
   viewerContainer.innerHTML = '';
+
+  setupLazyGalleryPreviews();
 
   history.pushState(null, '', window.location.pathname);
 }

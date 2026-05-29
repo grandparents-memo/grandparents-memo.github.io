@@ -21,6 +21,7 @@
     import * as THREE from 'three';
     import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
     import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
+    import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
     import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 
     const params = new URLSearchParams(location.search);
@@ -53,6 +54,7 @@
     draco.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.162.0/examples/jsm/libs/draco/gltf/');
     const loader = new GLTFLoader();
     loader.setDRACOLoader(draco);
+    loader.setMeshoptDecoder(MeshoptDecoder);
 
     const gltf = await loader.loadAsync(modelUrl);
     const object = gltf.scene;

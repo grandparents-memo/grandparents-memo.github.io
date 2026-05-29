@@ -44,4 +44,13 @@ export const mementos = [
     memory:
       'On hot summer afternoons, this fan hummed steadily in the corner of their bedroom. Grandpa would set it to the lowest speed so it wouldn\'t blow the papers off his desk. The gentle whir became the soundtrack of lazy afternoons spent listening to their stories.',
   },
+  {
+    id: 'may-bay',
+    title: 'Máy Bay',
+    model: 'assets/original/may-bay.glb',
+    modelMobile: 'assets/mobile/may-bay.glb',
+    poster: 'assets/posters/may-bay.webp',
+    memory:
+      'A small airplane that sat on the shelf in their home — a reminder of distant journeys and the dream of travel. Grandpa would point to it and tell us stories of the places he hoped to visit one day, and the skies he watched as a young man.',
+  },
 ];

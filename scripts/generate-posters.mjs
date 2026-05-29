@@ -14,6 +14,7 @@ const mementos = [
   { id: 'buddha-pendant', model: 'assets/original/buddha-pendant.glb' },
   { id: 'flower-metal-sculpture', model: 'assets/original/flower-metal-sculpture.glb' },
   { id: 'vintage-electric-fan', model: 'assets/original/vintage-electric-fan.glb' },
+  { id: 'may-bay', model: 'assets/original/may-bay.glb' },
 ];
 
 const mime = {

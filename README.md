@@ -15,18 +15,18 @@ Then open [http://localhost:8080](http://localhost:8080).
 ## Adding a memento
 
 1. Place your source `.glb` file in Downloads or project root
-2. Create the desktop/detail model (half mesh, 512px textures):
+2. Create the desktop/detail model (half mesh, 256px textures):
 
 ```bash
 npx @gltf-transform/cli optimize source.glb assets/original/your-model.glb \
-  --simplify-ratio 0.5 --texture-size 512
+  --simplify-ratio 0.5 --texture-size 256
 ```
 
-3. Create a mobile-optimized copy (256px textures):
+3. Create a mobile-optimized copy (128px textures):
 
 ```bash
 npx @gltf-transform/cli optimize source.glb assets/mobile/your-model.glb \
-  --compress draco --texture-compress webp --texture-size 256 --simplify-ratio 0.4
+  --compress draco --texture-compress webp --texture-size 128 --simplify-ratio 0.4
 ```
 
 4. Add an entry to `js/mementos.js` with `title`, `model`, `modelMobile`, `poster`, and `memory`

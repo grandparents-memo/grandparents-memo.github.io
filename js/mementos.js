@@ -18,13 +18,13 @@ export const mementos = [
       'This little bird sat on Grandpa\'s desk for as long as I can remember. He said it reminded him of freedom — of leaving the old country and building a new life. The patina on its wings grew richer with each passing year, just like his stories.',
   },
   {
-    id: 'buddha-pendant',
-    title: 'Buddha Pendant',
-    model: 'assets/original/buddha-pendant.glb',
-    modelMobile: 'assets/mobile/buddha-pendant.glb',
-    video: 'assets/videos/buddha-pendant.mp4',
+    id: 'su-tu',
+    title: 'Sư Tử',
+    model: 'assets/original/su-tu.glb',
+    modelMobile: 'assets/mobile/su-tu.glb',
+    video: 'assets/videos/su-tu.mp4',
     memory:
-      'Grandma wore this pendant close to her heart. She told us it was a gift from her mother, passed down through generations. On quiet evenings, she would hold it and whisper prayers — a ritual of peace that we still remember vividly.',
+      'A small lion figurine that sat on the shelf beside their favorite books — a symbol of strength and protection. Grandpa said it watched over the house quietly, the way grandparents watch over the family they love.',
   },
   {
     id: 'flower-metal-sculpture',

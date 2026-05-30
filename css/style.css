@@ -284,6 +284,7 @@ body {
   line-height: 1.85;
   color: var(--text);
   font-weight: 300;
+  white-space: pre-line;
 }
 
 /* Loading */

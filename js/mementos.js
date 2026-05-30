@@ -2,6 +2,7 @@ export const mementos = [
   {
     id: 'black-handbag',
     title: 'Black Handbag',
+    note: 'Her everyday companion',
     model: 'assets/original/black-handbag.glb',
     modelMobile: 'assets/mobile/black-handbag.glb',
     video: 'assets/videos/black-handbag.mp4',
@@ -11,6 +12,7 @@ export const mementos = [
   {
     id: 'bronze-bird',
     title: 'Bronze Bird Sculpture',
+    note: 'Desk guardian',
     model: 'assets/original/bronze-bird.glb',
     modelMobile: 'assets/mobile/bronze-bird.glb',
     video: 'assets/videos/bronze-bird.mp4',
@@ -20,6 +22,7 @@ export const mementos = [
   {
     id: 'su-tu',
     title: 'Sư Tử',
+    note: 'Shelf sentinel',
     model: 'assets/original/su-tu.glb',
     modelMobile: 'assets/mobile/su-tu.glb',
     video: 'assets/videos/su-tu.mp4',
@@ -29,6 +32,7 @@ export const mementos = [
   {
     id: 'flower-metal-sculpture',
     title: 'Flower Metal Sculpture',
+    note: 'Hand-hammered bloom',
     model: 'assets/original/flower-metal-sculpture.glb',
     modelMobile: 'assets/mobile/flower-metal-sculpture.glb',
     video: 'assets/videos/flower-metal-sculpture.mp4',
@@ -38,6 +42,7 @@ export const mementos = [
   {
     id: 'vintage-electric-fan',
     title: 'Vintage Electric Fan',
+    note: 'Summer afternoon hum',
     model: 'assets/original/vintage-electric-fan.glb',
     modelMobile: 'assets/mobile/vintage-electric-fan.glb',
     video: 'assets/videos/vintage-electric-fan.mp4',
@@ -47,6 +52,7 @@ export const mementos = [
   {
     id: 'may-bay',
     title: 'Máy Bay',
+    note: 'Dreams of distant skies',
     model: 'assets/original/may-bay.glb',
     modelMobile: 'assets/mobile/may-bay.glb',
     video: 'assets/videos/may-bay.mp4',

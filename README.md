@@ -29,7 +29,7 @@ npx @gltf-transform/cli optimize source.glb assets/mobile/your-model.glb \
   --compress draco --texture-compress webp --texture-size 128 --simplify-ratio 0.4
 ```
 
-4. Add an entry to `js/mementos.js` with `title`, `model`, `modelMobile`, `video`, and `memory`
+4. Add an entry to `js/mementos.js` with `title`, `note`, `model`, `modelMobile`, `video`, and `memory`
 5. Generate a gallery preview video:
 
 ```bash

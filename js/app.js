@@ -196,6 +196,7 @@ function renderGallery() {
       </div>
       <div class="card-body">
         <h3 class="card-title">${m.title}</h3>
+        <p class="card-note">${m.note}</p>
         <p class="card-excerpt">${m.memory}</p>
         <div class="card-action">
           View memento
@@ -226,6 +227,7 @@ function openDetail(id) {
   if (!memento) return;
 
   document.getElementById('detail-title').textContent = memento.title;
+  document.getElementById('detail-note').textContent = memento.note;
   document.getElementById('detail-memory').textContent = memento.memory;
 
   galleryEl.classList.add('hidden');
